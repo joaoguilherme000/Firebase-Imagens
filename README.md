@@ -20,7 +20,7 @@ Expo SDK sempre atualize suas versoes antes de rodar o codigo para nao dar erro.
 yarn add expo@latest
 ```
 
-Next you can run:
+Depois rode:
 
 ```
 npx expo install
