@@ -1,5 +1,4 @@
 import { Image, Text, StyleSheet, View, TouchableOpacity } from "react-native";
-import { BlurView, VibrancyView } from "@react-native-community/blur";
 import ProgressBar from "./ProgressBar";
 import { Video } from "expo-av";
 
@@ -16,16 +15,7 @@ export function UploadingAndroid({ image, video, progress }) {
         },
       ]}
     >
-      {Platform.OS === "ios" && (
-        // VibrancyView is only supported on iOS
-        //https://github.com/Kureev/react-native-blur#vibrancyview
-        <VibrancyView
-          blurType="ultraThinMaterialDark"
-          style={StyleSheet.absoluteFill}
-        ></VibrancyView>
-      )}
-
-      <BlurView
+      <View
         style={{
           width: "70%",
           // Some styles could  work oncorrectly on Android.
@@ -84,7 +74,7 @@ export function UploadingAndroid({ image, video, progress }) {
             </Text>
           </TouchableOpacity>
         </View>
-      </BlurView>
+      </View>
     </View>
   );
 }

@@ -1,5 +1,4 @@
 import { Image, Text, StyleSheet, View, TouchableOpacity } from "react-native";
-import { BlurView, VibrancyView } from "@react-native-community/blur";
 import ProgressBar from "./ProgressBar";
 import { Video } from "expo-av";
 
@@ -15,11 +14,7 @@ export function Uploading({ image, video, progress }) {
         },
       ]}
     >
-      <VibrancyView
-        blurType="ultraThinMaterialDark"
-        style={StyleSheet.absoluteFill}
-      ></VibrancyView>
-      <BlurView
+      <View
         style={{
           width: "70%",
           alignItems: "center",
@@ -71,7 +66,7 @@ export function Uploading({ image, video, progress }) {
             Cancel
           </Text>
         </TouchableOpacity>
-      </BlurView>
+      </View>
     </View>
   );
 }
