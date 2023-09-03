@@ -1,9 +1,7 @@
 import { Image, Text, StyleSheet, View, TouchableOpacity } from "react-native";
 import ProgressBar from "./ProgressBar";
-import { Video } from "expo-av";
 
-export function UploadingAndroid({ image, video, progress }) {
-  // The component has the same logic. However, the blur effect works differently on Android.
+export function UploadingAndroid({ image, progress }) {
   return (
     <View
       style={[
@@ -18,59 +16,34 @@ export function UploadingAndroid({ image, video, progress }) {
       <View
         style={{
           width: "70%",
-          // Some styles could  work oncorrectly on Android.
+          // Alguns estilos podem nao funcionar no android.
         }}
-        blurType="dark"
       >
-        <View
-          style={{
-            alignItems: "center",
-            paddingVertical: 10,
-            rowGap: 12,
-            borderRadius: 14,
-            backgroundColor: "#FFFFFF",
-          }}
-        >
+        <View style={styles.caixa}>
           {image && (
             <Image
               source={{ uri: image }}
               style={{
-                width: 100,
-                height: 100,
+                width: "40%",
+                height: "40%",
                 resizeMode: "contain",
                 borderRadius: 6,
               }}
             />
           )}
-          {video && (
-            <Video
-              source={{
-                uri: video,
-              }}
-              videoStyle={{}}
-              rate={1.0}
-              volume={1.0}
-              isMuted={false}
-              resizeMode="contain"
-              // shouldPlay
-              // isLooping
-              style={{ width: 200, height: 200 }}
-              // useNativeControls
-            />
-          )}
-          <Text style={{ fontSize: 12 }}>Uploading...</Text>
+          <Text style={{ fontSize: 12 }}>ENVIANDO PARA O BANCO</Text>
           <ProgressBar progress={progress} />
           <View
             style={{
               height: 1,
               borderWidth: StyleSheet.hairlineWidth,
               width: "100%",
-              borderColor: "#00000020",
+              borderColor: "#000",
             }}
           />
           <TouchableOpacity>
-            <Text style={{ fontWeight: "500", color: "#3478F6", fontSize: 17 }}>
-              Cancel
+            <Text style={{ fontWeight: "500", color: "#f4a100", fontSize: 17 }}>
+              Cancelar
             </Text>
           </TouchableOpacity>
         </View>
@@ -78,3 +51,21 @@ export function UploadingAndroid({ image, video, progress }) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  caixa: {
+    alignItems: "center",
+    paddingVertical: 10,
+    rowGap: 12,
+    borderRadius: 14,
+    backgroundColor: "#fff",
+    shadowColor: "#000", // Cor da sombra
+    shadowOffset: {
+      width: 0, // Offset horizontal da sombra
+      height: 2, // Offset vertical da sombra
+    },
+    shadowOpacity: 0.2, // Opacidade da sombra
+    shadowRadius: 4, // Raio da sombra
+    elevation: 5, // Apenas para Android (elevation é igual à sombra no Android)
+  },
+});

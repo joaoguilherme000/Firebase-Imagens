@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import {
-  View,
   TouchableOpacity,
+  Text,
   Image,
+  StyleSheet,
   FlatList,
   Platform,
+  SafeAreaView,
 } from "react-native";
 import { Uploading } from "../components/Uploading";
 import { Ionicons } from "@expo/vector-icons";
@@ -12,19 +14,17 @@ import * as ImagePicker from "expo-image-picker";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { addDoc, collection, onSnapshot } from "firebase/firestore";
 import { db, storage } from "../firebaseConfig";
-import { Video } from "expo-av";
 import { UploadingAndroid } from "../components/UploadingAndroid";
 
 export default function Home() {
   const [image, setImage] = useState("");
-  const [video, setVideo] = useState("");
   const [progress, setProgress] = useState(0);
   const [files, setFiles] = useState([]);
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, "files"), (snapshot) => {
+    const unsubscribe = onSnapshot(collection(db, "imagens"), (snapshot) => {
       snapshot.docChanges().forEach((change) => {
         if (change.type === "added") {
-          console.log("New file", change.doc.data());
+          console.log("NOVO ARQUIVO", change.doc.data());
           setFiles((prevFiles) => [...prevFiles, change.doc.data()]);
         }
       });
@@ -36,28 +36,14 @@ export default function Home() {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      aspect: [3, 4],
+      aspect: [1, 1],
       quality: 1,
     });
 
     if (!result.canceled) {
       setImage(result.assets[0].uri);
-      // upload the image
+      // manda a imagem
       await uploadImage(result.assets[0].uri, "image");
-    }
-  }
-
-  async function pickVideo() {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Videos,
-      allowsEditing: true,
-      aspect: [3, 4],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setImage(result.assets[0].uri);
-      await uploadImage(result.assets[0].uri, "video");
     }
   }
 
@@ -65,28 +51,27 @@ export default function Home() {
     const response = await fetch(uri);
     const blob = await response.blob();
 
-    const storageRef = ref(storage, "Stuff/" + new Date().getTime());
+    const storageRef = ref(storage, "Imagens/");
     const uploadTask = uploadBytesResumable(storageRef, blob);
 
-    // listen for events
+    // Evento
     uploadTask.on(
-      "state_changed",
+      "mudança de estado",
       (snapshot) => {
         const progress =
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log("Upload is " + progress + "% done");
+        console.log("upload esta " + progress + "% feito");
         setProgress(progress.toFixed());
       },
       (error) => {
-        // handle error
+        // pega o erro
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
-          console.log("File available at", downloadURL);
+          console.log("disponivel em: ", downloadURL);
           // save record
           await saveRecord(fileType, downloadURL, new Date().toISOString());
           setImage("");
-          setVideo("");
         });
       }
     );
@@ -94,48 +79,36 @@ export default function Home() {
 
   async function saveRecord(fileType, url, createdAt) {
     try {
-      const docRef = await addDoc(collection(db, "files"), {
+      const docRef = await addDoc(collection(db, "imagens"), {
         fileType,
         url,
         createdAt,
       });
-      console.log("document saved correctly", docRef.id);
+      console.log("Documento salvo com sucesso", docRef.id);
     } catch (e) {
       console.log(e);
     }
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        margin: 0,
+        marginTop: "8%",
+      }}
+    >
+      <Text style={styles.titulo}>FOTOS NO BANCO</Text>
       <FlatList
         data={files}
         keyExtractor={(item) => item.url}
         renderItem={({ item }) => {
-          if (item.fileType === "image") {
-            return (
-              <Image
-                source={{ uri: item.url }}
-                style={{ width: "34%", height: 100 }}
-              />
-            );
-          } else {
-            return (
-              <Video
-                source={{
-                  uri: item.url,
-                }}
-                // videoStyle={{ borderWidth: 1, borderColor: "red" }}
-                rate={1.0}
-                volume={1.0}
-                isMuted={false}
-                resizeMode="cover"
-                shouldPlay
-                // isLooping
-                style={{ width: "34%", height: 100 }}
-                useNativeControls
-              />
-            );
-          }
+          return (
+            <Image
+              source={{ uri: item.url }}
+              style={{ width: "34%", height: 130 }}
+            />
+          );
         }}
         numColumns={3}
         contentContainerStyle={{ gap: 2 }}
@@ -143,10 +116,9 @@ export default function Home() {
       />
       {image &&
         (Platform.OS === "ios" ? (
-          <Uploading image={image} video={video} progress={progress} />
+          <Uploading image={image} progress={progress} />
         ) : (
-          // Some features of blur are not available on Android
-          <UploadingAndroid image={image} video={video} progress={progress} />
+          <UploadingAndroid image={image} progress={progress} />
         ))}
       <TouchableOpacity
         onPress={pickImage}
@@ -154,8 +126,8 @@ export default function Home() {
           position: "absolute",
           bottom: 90,
           right: 30,
-          width: 44,
-          height: 44,
+          width: 55,
+          height: 55,
           backgroundColor: "black",
           justifyContent: "center",
           alignItems: "center",
@@ -164,22 +136,19 @@ export default function Home() {
       >
         <Ionicons name="image" size={24} color="white" />
       </TouchableOpacity>
-      <TouchableOpacity
-        onPress={pickVideo}
-        style={{
-          position: "absolute",
-          bottom: 150,
-          right: 30,
-          width: 44,
-          height: 44,
-          backgroundColor: "black",
-          justifyContent: "center",
-          alignItems: "center",
-          borderRadius: 25,
-        }}
-      >
-        <Ionicons name="videocam" size={24} color="white" />
-      </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    alignItems: "center",
+    justifyContent: "center",
+    flex: 1,
+  },
+  titulo: {
+    alignSelf: "center",
+    fontSize: 15,
+    margin: 10,
+  },
+});

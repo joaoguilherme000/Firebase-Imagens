@@ -19,7 +19,7 @@ export default function ProgressBar({ progress }) {
         <Rect
           width={progressWidth}
           height={"100%"}
-          fill={"#3478F6"}
+          fill={"#f4a100"}
           rx={3.5}
           ry={3.5}
         />

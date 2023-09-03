@@ -1,13 +1,20 @@
 import { View, Text } from "react-native";
-import SvgComponent from "../assets/SVG";
-
 export default function EmptyState() {
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <SvgComponent />
-      <Text style={{ color: "gray", marginTop: 20 }}>
-        No photo uploaded yet
-      </Text>
+    <View style={styles.container}>
+      <Text style={styles.titulo}>NENHUMA FOTO AQUI</Text>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    alignItems: "center",
+    justifyContent: "center",
+    flex: 1,
+  },
+  titulo: {
+    height: "50%",
+    width: "50%",
+  },
+});

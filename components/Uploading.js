@@ -1,6 +1,5 @@
 import { Image, Text, StyleSheet, View, TouchableOpacity } from "react-native";
 import ProgressBar from "./ProgressBar";
-import { Video } from "expo-av";
 
 export function Uploading({ image, video, progress }) {
   return (
@@ -22,7 +21,6 @@ export function Uploading({ image, video, progress }) {
           rowGap: 12,
           borderRadius: 14,
         }}
-        blurType="light"
       >
         {image && (
           <Image
@@ -35,23 +33,7 @@ export function Uploading({ image, video, progress }) {
             }}
           />
         )}
-        {video && (
-          <Video
-            source={{
-              uri: video,
-            }}
-            videoStyle={{}}
-            rate={1.0}
-            volume={1.0}
-            isMuted={false}
-            resizeMode="contain"
-            // shouldPlay
-            // isLooping
-            style={{ width: 200, height: 200 }}
-            // useNativeControls
-          />
-        )}
-        <Text style={{ fontSize: 12 }}>Uploading...</Text>
+        <Text style={{ fontSize: 12 }}>ENVIANDO PARA O BANCO</Text>
         <ProgressBar progress={progress} />
         <View
           style={{
