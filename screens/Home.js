@@ -7,6 +7,9 @@ import {
   FlatList,
   Platform,
   SafeAreaView,
+  TextInput,
+  Modal,
+  View,
 } from "react-native";
 import { Uploading } from "../components/Uploading";
 import { Ionicons } from "@expo/vector-icons";
@@ -17,6 +20,10 @@ import { db, storage } from "../firebaseConfig";
 import { UploadingAndroid } from "../components/UploadingAndroid";
 
 export default function Home() {
+  const [texto, setTexto] = useState("");
+  const [texto2, setTexto2] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
+
   const [image, setImage] = useState("");
   const [progress, setProgress] = useState(0);
   const [files, setFiles] = useState([]);
@@ -51,7 +58,7 @@ export default function Home() {
     const response = await fetch(uri);
     const blob = await response.blob();
 
-    const storageRef = ref(storage, "Imagens/");
+    const storageRef = ref(storage, `${texto}/${texto2}/`);
     const uploadTask = uploadBytesResumable(storageRef, blob);
 
     // Evento
@@ -89,6 +96,31 @@ export default function Home() {
       console.log(e);
     }
   }
+
+  const handleInputChange = (text) => {
+    setTexto(text);
+  };
+
+  const handleInputChange2 = (text) => {
+    setTexto2(text);
+  };
+
+  const abrirModal = () => {
+    setModalVisible(true);
+  };
+
+  const fecharModal = () => {
+    setModalVisible(false);
+  };
+
+  const Confirmar = () => {
+    console.log("Usuário clicou em Sim");
+    setModalVisible(false);
+  };
+  const Negar = () => {
+    console.log("Usuário clicou em Nao");
+    setModalVisible(false);
+  };
 
   return (
     <SafeAreaView
@@ -136,6 +168,54 @@ export default function Home() {
       >
         <Ionicons name="image" size={24} color="white" />
       </TouchableOpacity>
+      <TouchableOpacity
+        onPress={abrirModal}
+        style={{
+          position: "absolute",
+          bottom: 170,
+          right: 30,
+          width: 55,
+          height: 55,
+          backgroundColor: "black",
+          justifyContent: "center",
+          alignItems: "center",
+          borderRadius: 25,
+        }}
+      >
+        <Ionicons name="add" size={24} color="white" />
+      </TouchableOpacity>
+      <Modal visible={modalVisible} animationType="slide" transparent={true}>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.label}>Digite o nome da Categoria:</Text>
+            <TextInput
+              style={styles.input}
+              onChangeText={handleInputChange}
+              value={texto}
+            />
+            <Text style={styles.modalText}>Digite o nome do produto:</Text>
+            <TextInput
+              style={styles.input}
+              onChangeText={handleInputChange2}
+              value={texto2}
+            />
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity
+                onPress={Confirmar}
+                style={[styles.modalButton, styles.confirmButton]}
+              >
+                <Text style={styles.buttonText}>Sim</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={Negar}
+                style={[styles.modalButton, styles.cancelButton]}
+              >
+                <Text style={styles.buttonText}>Não</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -150,5 +230,59 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     fontSize: 15,
     margin: 10,
+  },
+  label: {
+    fontSize: 18,
+    marginBottom: 10,
+  },
+  input: {
+    width: "80%",
+    borderWidth: 1,
+    borderColor: "#ccc",
+    padding: 10,
+    marginBottom: 20,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
+  },
+  modalContent: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  modalText: {
+    fontSize: 18,
+    marginBottom: 10,
+  },
+  digitado: {
+    color: "#f44",
+    fontSize: 15,
+    marginBottom: 15,
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  modalButton: {
+    padding: 10,
+    borderRadius: 5,
+    alignItems: "center",
+    width: "45%",
+  },
+  buttonText: {
+    fontSize: 16,
+    color: "white",
+  },
+  confirmButton: {
+    backgroundColor: "green",
+    margin: 15,
+  },
+  cancelButton: {
+    backgroundColor: "red",
+    margin: 15,
   },
 });
