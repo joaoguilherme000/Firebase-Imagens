@@ -12,7 +12,7 @@ import {
   View,
 } from "react-native";
 import { Uploading } from "../components/Uploading";
-import { Ionicons } from "@expo/vector-icons";
+import Icon from "react-native-vector-icons/FontAwesome";
 import * as ImagePicker from "expo-image-picker";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { addDoc, collection, onSnapshot } from "firebase/firestore";
@@ -22,7 +22,7 @@ import { UploadingAndroid } from "../components/UploadingAndroid";
 export default function Home() {
   const [texto, setTexto] = useState("");
   const [texto2, setTexto2] = useState("");
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(true);
 
   const [image, setImage] = useState("");
   const [progress, setProgress] = useState(0);
@@ -114,11 +114,7 @@ export default function Home() {
   };
 
   const Confirmar = () => {
-    console.log("Usuário clicou em Sim");
-    setModalVisible(false);
-  };
-  const Negar = () => {
-    console.log("Usuário clicou em Nao");
+    console.log("Usuário clicou em Feito");
     setModalVisible(false);
   };
 
@@ -153,22 +149,6 @@ export default function Home() {
           <UploadingAndroid image={image} progress={progress} />
         ))}
       <TouchableOpacity
-        onPress={pickImage}
-        style={{
-          position: "absolute",
-          bottom: 90,
-          right: 30,
-          width: 55,
-          height: 55,
-          backgroundColor: "black",
-          justifyContent: "center",
-          alignItems: "center",
-          borderRadius: 25,
-        }}
-      >
-        <Ionicons name="image" size={24} color="white" />
-      </TouchableOpacity>
-      <TouchableOpacity
         onPress={abrirModal}
         style={{
           position: "absolute",
@@ -182,18 +162,34 @@ export default function Home() {
           borderRadius: 25,
         }}
       >
-        <Ionicons name="add" size={24} color="white" />
+        <Icon name="pencil" size={30} color="white" />
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={pickImage}
+        style={{
+          position: "absolute",
+          bottom: 90,
+          right: 30,
+          width: 55,
+          height: 55,
+          backgroundColor: "black",
+          justifyContent: "center",
+          alignItems: "center",
+          borderRadius: 25,
+        }}
+      >
+        <Icon name="image" size={30} color="white" />
       </TouchableOpacity>
       <Modal visible={modalVisible} animationType="slide" transparent={true}>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.label}>Digite o nome da Categoria:</Text>
+            <Text style={styles.label}>Digite o nome da Categoria</Text>
             <TextInput
               style={styles.input}
               onChangeText={handleInputChange}
               value={texto}
             />
-            <Text style={styles.modalText}>Digite o nome do produto:</Text>
+            <Text style={styles.modalText}>Digite o nome do produto</Text>
             <TextInput
               style={styles.input}
               onChangeText={handleInputChange2}
@@ -204,13 +200,7 @@ export default function Home() {
                 onPress={Confirmar}
                 style={[styles.modalButton, styles.confirmButton]}
               >
-                <Text style={styles.buttonText}>Sim</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={Negar}
-                style={[styles.modalButton, styles.cancelButton]}
-              >
-                <Text style={styles.buttonText}>Não</Text>
+                <Text style={{ fontSize: 16 }}>Feito</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -237,31 +227,32 @@ const styles = StyleSheet.create({
   },
   input: {
     width: "80%",
-    borderWidth: 1,
-    borderColor: "#ccc",
-    padding: 10,
+    padding: 1,
     marginBottom: 20,
+    backgroundColor: "rgba(0, 0, 102, 0.3)",
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
   },
   modalContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
   },
   modalContent: {
     backgroundColor: "white",
     padding: 20,
-    borderRadius: 10,
+    borderRadius: 25,
     alignItems: "center",
+    shadowColor: "rgba(0, 0, 0, 1)",
+    shadowOffset: { width: -9, height: 4 },
+    shadowOpacity: 1,
+    shadowRadius: 1,
+    elevation: 15,
   },
   modalText: {
     fontSize: 18,
     marginBottom: 10,
-  },
-  digitado: {
-    color: "#f44",
-    fontSize: 15,
-    marginBottom: 15,
   },
   buttonContainer: {
     flexDirection: "row",
@@ -273,16 +264,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "45%",
   },
-  buttonText: {
-    fontSize: 16,
-    color: "white",
-  },
   confirmButton: {
-    backgroundColor: "green",
-    margin: 15,
-  },
-  cancelButton: {
-    backgroundColor: "red",
-    margin: 15,
+    paddingVertical: 9,
+    borderRadius: 999,
+    backgroundColor: "transparent", // Defina o fundo como transparente
+    borderWidth: 2, // Adicione uma borda com largura 2
+    borderColor: "green", // Cor da borda verde
+    margin: 9,
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "green", // Adicione uma sombra verde
+    shadowOffset: { width: -5, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 6, // Elevação para sombra no Android
   },
 });
